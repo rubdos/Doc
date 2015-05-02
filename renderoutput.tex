@@ -1,0 +1,41 @@
+\chapter{Render Output}
+\section{General Workflow}
+
+The YafaRay addon in Blender basically pass renders into Blender Compositor in linear high dynamic range, the same way Blender Internal or Cycles do.
+
+\missingfigure{Blender render pipeline.}
+
+Users can as well save YafaRay renders automatically into the hard disk every time a YafaRay render is finished. Basically there are 3 ways to output YafaRay renders in Blender when a job is finished:
+
+\begin{enumerate}
+\item From Blender UV/Image editor with F3, which saves YafaRay renders into disk. Several image formats are available, including HDR formats.
+\item The Render Layers node will load last render produced with the YafaRay engine into Blender Compositing Nodes Editor as well.
+\item You can save automatically into the hard disk every time YafaRay finishes rendering, by enabling the YafaRay option Render: Image File. Renders will be saved into the location and using the format specified in the section Output. With this workflow you can save a multilayer OpenEXR file with main render pass, alpha pass and z-depth pass.
+\end{enumerate}
+
+\missingfigure{When render is set to Image file, YafaRay automatically saves into the hard disk when rendering is finished, as set in the Output section. If EXR output, Render depth map and RGBA are enabled, a multilayer EXR will be produced with such render passes. This is a good option for animation frames output.}
+
+Remember that you can load YafaRay renders from the hard disk into the Blender Compositing Nodes Editor using the node Add\textrightarrow{}Input\textrightarrow{}Image.
+\section{Linear Workflow in YafaRay}
+
+In order to work using a linear workflow and to take advantage of Blender Color Management and compositing tools, YafaRay needs to have input images and colors changed into linear space before processing them and then passing the final render data to Blender Compositor using a linear space as well. For this flow to work, users need to set just two controls in YafaRay general settings panel:
+
+\begin{itemize}
+\item Gamma input: 2.20 for texture and color inputs using sRGB color space.
+\item Gamma: 1.00 for linear render output.
+\end{itemize}
+
+This workflow is compatible with Blender Color Management enabled using sRGB color space. It will produce correct linear HDR data for editing work in the Blender Compositor and for EXR Image file output.
+
+\missingfigure{Users will need to use Gamma output = 2.2 only when Render is set to Image file using an image file format using the sRGB color space (TIFF, TGA, JPG, PNG). Anyway, it is recommended to save always a EXR version of your work (even animations) and to use lossless graphic format for 8-bits color, such as PNG.}
+\section{Blender windows layout for optimal work}
+
+Users will need to render into an active Blender UV/Image editor window in order to take advantage of the non-blocking nature of the YafaRay rendering event, so they can keep on working on the scene while the rendering process is running. To make this possible, render Display should be dumped into an available UV/Image editor window, as shown in the image below.
+
+Working with Blender Compositing Nodes Editor
+
+Blender compositing nodes editor is a neutral tool that is intended to work with any kind of input, either from the render pipeline or image data sourced from the hard disk. The compositing nodes editor works always in linear high dynamic range mode, and it is a great open source tool for compositing and tonemapping work.
+
+Users can load YafRay renders in the nodes compositor through the default Render Layers node. If you want to update automatically the nodes tree every time rendering is finished, Compositing option should be enabled in the Post Processing panel. You can load into the composition YafaRay renders from other scenes within the blend file as well as from the hard disk with the the node Add\textrightarrow{}Input\textrightarrow{}Image.
+
+\missingfigure{In the example above, two EXR yafaray renders from the hard disk and the YafaRay render output from the Blender pipeline are mixed in the nodes compositor. Compositing is enabled for automatic update of the nodes tree each time rendering is finished.}

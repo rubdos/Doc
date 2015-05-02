@@ -1,0 +1,169 @@
+\chapter{Objects, Lights and Camera settings}
+In general, settings under these three section of the YafaRay UI are used to give specific YafaRay properties to meshes, light sources and cameras in the Blender 3D scene. The general workflow is:
+\begin{enumerate}
+\item Create or select an existing object (mesh, light or camera) in the 3D scene.
+\item Give it YafaRay specific settings using the YafaRay UI.
+\end{enumerate}
+
+\section{Object (meshlight)}
+With this feature, a whole mesh in the 3D scene can act as an area light source. The soft shadows produced by area lights need to be sampled several times and then interpolated to reduce noise. This type of light takes more time to render in contrast with point light types such as spot and point.
+
+First of all, you must select the mesh you want it to act as a light source. Then you must enable Object data panel. Finally you must activate the Enable Meshlight button in the YafaRay Object Properties secion. To change the light color, just click on the rectangle next to Meshlight color to open a Color Picker.
+
+\begin{description}
+\item[Meshlight color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for meshlight color.
+\item[Double Sided] considers both sides of every face as area light.
+\item[Samples] defines the amount of samples taken to calculate the soft shadows. The more samples, the less noisy the shadows but the longer it will take to render. The total amount of light sampling depends as well on the anti-aliasing settings, as explained in this section.
+\end{description}
+
+\missingfigure{Example of Meshlights, rendered with Bidirectional.}
+
+\todo{Related articles, see yafaray documentation}
+
+\section{Lights}
+
+Lights settings are now fully controlled by the YafaRay UI. The general workflow is creating or selecting a light in the 3D viewport and then editing its properties using the Lamp data section. Users can edit lamp type, color, power, shadows sampling, geometry, etc. It is worth rememberting that lighting power is in fact a product of a couple of settings, Color and Power, available for every light type.
+
+\subsection{Point and Sphere}
+
+In YafaRay there are two options to reproduce omnidirectional lighting which are Point and Sphere. A Point light is a typical omni directional point light source as in Blender Internal with hard shadows, while a Sphere light is a spherical area light source which can produce soft shadows.
+
+The Sphere light settings are:
+\begin{description}
+\item[Light color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for light color.
+\item[Radius] sets the radius of the Sphere light in Blender units.
+\item[Create and show geometry] area light gets rendered visibly.
+\item[Samples] defines the amount of samples taken to calculate the soft shadows. The more samples, the less noisy the shadows but the longer it will take to render. The total amount of light sampling depends as well on the anti-aliasing settings, as explained in this section.
+\end{description}
+
+\missingfigure{Comparison between point light (left) and spherelight (right). Notice the different shadows.}
+
+\subsection{Directional and Sun}
+
+In YafaRay there are two options to reproduce sun lighting which are Directional and Sun.
+
+\smallskip
+
+\paragraph{Directional} light is a traditional sun light model which produces parallel rays and hard-edged shadows.
+\begin{description}
+\item[Light color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for light color.
+\item[Infinite] if enabled, area covered by the directional light is infinite. If disabled, light fills a semi-infinite cylinder.
+\item[Radius] if infinite is disabled, radius of the semi-infinite cylinder for directional light.
+\end{description}
+
+\paragraph{Sun} light is a more advanced concept and will help us to get blurred-edged shadows when the shadow itself gets away from the casting object, as in real life. The Angle button sets the visible area of the sun. Real sun is visible in a cone angle of about 0,5º. A bigger angle mean a bigger sun, as well as softer shadows, which could be interesting for dawn or sunset scenes. A very big angle can be used to simulate sun light filtered by an overcast sky.
+\begin{description}
+\item[Light color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for light color.
+\item[Angle] visible size of the sun light. Affects shadows.
+\item[Samples] it defines the amount of samples taken to calculate the soft shadows. The more samples, the less noisy the shadows but the longer it will take to render. The total amount of light sampling depends as well on the anti-aliasing settings, as explained in this section.
+\end{description}
+
+
+\missingfigure{Comparison between Directional (left) and Sun (right). Notice how, with a Sun light, shadows get blurred as the distance with the casting object increases.}
+
+\subsection{Area}
+
+Arealight is a area light type that can produce soft shadows and its shape can be seen in reflective surfaces. The arealight shadows need to be sampled several times and interpolated to reduce noise in shadows. This type of light takes more time to be computed in contrast with point light types such as spot and point.
+
+Area light size can be controlled in the Area Shape section although you can scale lamp size in the 3D viewport as well. When Create and show geometry is enabled, a rectangle in the size of the area light is generated, so that the area light gets rendered in camera and on reflective components. More lighting power is added as well to the scene. When pathtracing is used, the Create and show geometry option also creates caustics paths, although there exist an option to not trace caustics paths with path tracing as they tend to be extremely noisy (`none' option in Pathtracing settings, see 5.1.1).
+
+\begin{description}
+\item[Light color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for arealight color.
+\item[Create and show geometry] area light gets rendered visibly. In path tracing, it shoots caustic path rays.
+\item[Samples] defines the amount of samples taken to calculate the soft shadows. The more samples, the less noisy the shadows but the longer it will take to render. The total amount of light sampling depends as well on the anti-aliasing settings, as explained in this section.
+\end{description}
+
+\missingfigure{Example of a rectangular visible arealight.}
+
+Related articles:
+
+First anti-aliasing pass.
+Glossy reflection sampling.
+
+Other area light types:
+
+Spherelight.
+Meshlight.
+
+\subsection{Spot}
+
+Spot is a common omnilight within a directional light beam. It has got a feature to blur shadows which could be useful when this light type is used as a sun light substitute in some photonmapping scenes.
+
+\begin{description}
+\item[Light color rectangle] opens a Color Picker.
+\item[Power] intensity multiplier for spotlight color.
+\item[Soft shadows] enables soft-edged shadows.
+\item[Samples] defines the amount of samples taken to calculate the soft shadows. The more samples, the less noisy the shadows but the longer it will take to render.
+\item[Shadow fuzzyness] fuzzyness of the soft shadows (0 - hard shadows, 1 - fuzzy shadows)
+\item[Photon only] it shots photons for indirect lighting and caustics in photon mapping methods but it is not sampled for shadows calculations.
+\item[Size] angle of the spotlight beam.
+\item[Blend] beam edge gradient.
+\item[Show distance and clipping] draws in the 3D viewport spot distance and clipping (Blender Internal features).
+\item[Distance] controls fall-off distance (Blender Internal feature).
+\item[Clip Start] controls shadow map starting point (Blender Internal feature).
+\item[Clip End] controls shadow map limit (Blender Internal feature).
+\item[Show cone] draws spotlight cone in the 3D viewport (Blender Internal feature).
+\end{description}
+
+In the bottom section of the spot light panel YafaRay developers have included Blender Internal spotlight geometry settings (Distance, Clip Start, Clip End, Show Cone) for more cues in beam directional control.
+
+\section{Camera settings}
+
+The general workflow is creating or selecting an existing camera in the 3D viewport and then editing its properties using the Camera data section. There are four camera types in YafaRay: Architect, Angular, Orthogonal and Perspective.
+
+\subsection{Architect/DOF}
+
+This camera type works like a Perspective camera type, the only difference is that the vertical component of the perspective effect is neglected, so scene vertical lines are not convergent. Depth of Field settings are available for this camera type as well. DOF settings are explained in the Perspective/DOF section.
+
+\missingfigure{Comparison between Perspective (left) and Architect camera (right). Notice the lack of vertical convergence in the Architect camera. Scene by Kronos}
+\subsection{Angular}
+
+A camera type useful to produce up to 180 degree panoramas, like the ones produced by fish eye cameras. Alternatively this camera type can be used to create a nice perspective distortion in your renders. Results with this camera type are controlled by two factors: distance to the subject and angle of view.
+
+
+\missingfigure{Angle of view of a camera}
+
+\begin{description}
+\item[Angle] Horizontal opening angle of the camera, takes into account camera aspect ratio to calculate the vertical opening.
+\item[Max Angle] Diagonal opening of the circular render.
+\item[Mirrored] Mirrors the render in the x direction, as the reflections on a light probe.
+\item[Circular] Creates a circular render and shades areas outside.
+\end{description}
+
+\missingfigure{Example of an angular camera, used to create perspective distortion. Scene by Gabich.}
+
+\subsection{Orthogonal}
+
+A camera type that renders an orthographic (perpendicular) projection of the scene, without perspective effects. Camera only setting is:
+\begin{description}
+\item[Scale] Specify the scale of the ortho camera, to control camera zoom.
+\end{description}
+
+
+Comparison between perspective camera (left) and ortho camera (right).
+\subsection{Perspective/DOF}
+
+Perspective is the standard camera mode that simulates a lenses photographic camera with perspective effects. All settings available for this camera type are used to enable and configure the depth of field (DOF) effect. The depth of field is the distance that objects appear in focus. DOF settings are:
+
+\begin{description}
+\item[Focal Length] distance from the focal point to the image plane in milimeters, to control camera zoom and perspective.
+\item[Aperture] The size of the aperture determines how blurred the out-of-focus objects will be. A rule of thumb is to keep it between 0.100 and 0.500 (0 disables DOF).
+\item[Obj] Enter the name of the Blender object where the scene will be in focus.
+\item[Distance] set the point in which objects will be in focus.
+\item[Bokeh type] controls the shape of out of focus points when rendering with depth of field enabled (blur disk). This is mostly visible on very out of focus highlights in the image. There are currently seven types to choose from.
+\item[Bokeh bias] controls the accentuation of the blur disk. Three types available, uniform, center or edge, with uniform the default.
+\item[Bokeh rotation] rotation of the blur disk.
+\end{description}
+
+The DOF effect depends also on the render anti aliasing settings to get a nice blurred effect. First of all it is recommended to lower AA threshold a bit, but not set it to totally zero. Setting a high number of AA passes is also not really going to make all that much difference, the main smoothness factor that makes the most difference is really the amount of AA samples. A single pass with a high number of samples may be sufficient.
+
+\paragraph{Camera Shift}
+Technically speaking, this feature shifts the image plane with respect to the focal point so the former is not longer centered. Useful for camera matching work.
+
+\paragraph{Camera Clipping}
+Sets the camera clipping limits. Only objects within the limits are rendered. If Limits in the Display panel is enabled, the clip bounds will be visible as two yellow connected dots on the camera line of sight. Useful to make focal lengths compatible with scenes, as explained here,
