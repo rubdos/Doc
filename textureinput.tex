@@ -1,0 +1,254 @@
+\chapter{Texture Mapping}
+
+One of the main points of the old YafRay was the close support of Blender Internal texturing features, and YafaRay keeps this tradition. In general, YafaRay supports:
+\begin{itemize}
+\item Multiple texture channels for modulating a material component.
+\item Procedural textures for color and scalar texturing.
+\item Image files (even HDR input) for color and scalar texturing.
+\item Several texturing coordinates models and mapping parameters.
+\end{itemize}
+
+Like in other 3D rendering packages, there are two main types of texturing: color and scalar. Color texturing is used to modulate color in a material component that allows such an input: diffuse color, mirror color and glossy color. Scalar texturing is performed in material components that do not require color information but a quantity: bump, mirror amount, transparency amount, translucency amount, glossy amount and blending amount. In scalar texturing RGB values are automatically transformed into scalar values (greyscale) ranging from 1 (white) to 0 (black). It is better to use textures in grayscale mode to do scalar texturing in order to make results more predictable.
+\section{Texture Channels}
+
+YafaRay supports multiple texture channels for each material component and for relief mapping. Blender principles are observed here: each channel can have its own individual mapping settings and the lower channel in the stack has got priority over the upper one. For instance, a decal should be in a lower channel than a color texture affecting the whole mesh. Also textures blending operations work from bottom to top.
+\section{Procedural Texture Type.}
+
+A procedural texture is a computer generated image produced by an algorithm, intended to create a realistic representation of natural elements such as wood, marble, granite, metal, stone, and others.
+
+Procedurals can be used as a color texture or as a scalar texture in any of the mapping options available. Colors in a procedural texture are defined by two controls: Color Picker in the YafaRay Influence (Map to) panel and material diffuse color in the Material section.
+
+Procedural textures supported are: Distorted Noise, Musgrave, Voronoi, Marbre, Wood, Clouds, and Blend. Besides, there is an additional "RGB-cube" procedural type only available by XML output.
+\subsection{Noise Basis}
+
+Noise Basis, which is a setting available for most procedural types, governs the structural appearance of the procedural texture. Noise Basis types available in YafaRay are:
+
+These are the settings supported in each procedural type:
+\todo{These constructions are weird, have to look at them and insert images}
+\subsection{Clouds}
+
+Useful for soft bump mapping of irregular surfaces.
+\begin{description}
+\item[Soft/Hard noise] Noise strength.
+\item[Noise Size] sets scaling for noise.
+\item[NoiseDepth] Depth of calculation, the higher the more detail for noise.
+\item[Noise Basis] basis used for turbulence.
+\end{description}
+
+\subsection{Marble}
+
+Useful for marble. ;)
+
+\begin{description}
+\item[Sharpness (soft, sharp, sharper)] Noise definition.
+\item[Shape (sin, saw, tri)] band type.
+\item[Soft/Hard noise] Noise strength.
+\item[Basis] basis used for turbulence.
+\item[Size] sets scaling for noise.
+\item[Depth] Depth of calculation, the higher the more detail for noise.
+\item[Turbulence] amount of turbulence for bands.
+\end{description}
+
+\subsection{Wood}
+
+Useful for basic bands and noise with a structure.
+
+\begin{description}
+\item[Bands/BandNoise] the procedural is arranged in bands.
+\item[Rings / RingNoise] the procedural is arranged in rings.
+\item[Shape (sin, saw, tri)] band type.
+\item[Soft / Hard Noise] Noise strength.
+\item[Size] sets scaling for noise.
+\item[Turbulence] amount of turbulence for bands or rings.
+\item[Noise Basis] basis used for turbulence.
+\end{description}
+
+\subsection{Musgrave}
+
+Very flexible. Useful for terrain and rock surfaces. The \textbf{Intensity Scale} control is useful to localise the result.
+
+\begin{description}
+\item[Musgrave type] fractal noise algorithm (Hetero Terrain not supported).
+\item[Dimension] contrast between consecutive layers, for detail.
+\item[Lacunarity] gap between layers.
+\item[Octaves] layers of noise used.
+\item[Intensity] overall intensity of texture.
+\item[Noise Basis] basis used for turbulence.
+\item[Size] sets scaling for noise.
+\end{description}
+
+\subsection{Voronoi}
+
+Voronoi is a procedural type with a cellular look. Very flexible. Useful for organic surfaces.
+
+\begin{description}
+\item[Distance Metric] shape of the cells.
+\item[Coloring] color of the cells.
+\item[Intensity] overall intensity of texture.
+\item[Size] cell size.
+\item[Feature Weights (1, 2, 3, 4)] defines distances between each cell.
+\end{description}
+
+\subsection{Distorted Noise}
+
+Complex and versatile.
+
+\begin{description}
+\item[Distortion] amount of distortion.
+\item[Size] sets scaling for noise.
+\item[Noise Distortion] basis used for distortion.
+\item[Noise Basis] noise to distort.
+\end{description}
+
+\subsection{Blend}
+
+Gradient effects and for stencil.
+
+
+Related articles:
+
+Material Modulation.
+Volume types.
+The NoiseVolume Texture
+
+\section{Image Texture Type}
+
+Texture input is done by selecting Image as a Texture Type and loading the image in the `Map Image' panel. You can use several texture channels for modulating just one component or several ones. YafaRay 8-bits supported formats are tga, jpeg and png. YafaRay also supports 16-bits tiff, exr and hdr.
+
+\begin{description}
+\item[Source] Single image and Image Sequence are supported.
+\item[Input Color Space] Use sRBG for 8-bits formats and Raw for high dynamic range formats.
+\item[UseAlpha] Renders the texture alpha channel as transparent (if it exists), white otherwise. Enabled by default.
+\end{description}
+
+\note{YafaRay can not load Blender encapsulated textures. If your Blender file has got encapsulated data, you must unpack first (File\textrightarrow{}External~Data\textrightarrow{}Unpack). YafaRay will load textures from the created `textures' folder.
+
+During the rendering process, the Blender back console shows up messages when a texture image can't be loaded by YafaRay. Pay attention to them!
+
+If your file is unpacked but YafaRay can't load textures, be sure that the path selected in the 'Image' panel points to the actual location of the file in your HD.}
+\subsection{Image Sampling and Image Mapping}
+\begin{description}
+\item[Flip X/Y Axis] flips the texture's X and Y axis.
+\item[UseAlpha] Renders the texture alpha channel as transparent (if it exists), white otherwise.
+\item[CalcAlpha] transform RGB values into amount of transparency, for mapping transparency or translucency in the shinydiffuse material.
+\end{description}
+
+Texture extension:
+
+\begin{description}
+\item[Extend] the colour of the edge is extended outside the image.
+\item[Clip] an alpha value of 0.0 is returned outside the image. This allows you to 'paste' a small logo on a large object.
+\item[Clipcube] outside a cube-shaped area around the image, an alpha value of 0.0 is returned.
+\item[Repeat] The image is repeated horizontally and vertically as often as set in Xrepeat and Yrepeat
+\item[Checker] a checkerboard is made. Mortar governs the distance between the checkers.
+\item[Xrepeat, Yrepeat] sets a repetition multiplier in the corresponding direction.
+\item[Crop Mix X, Y - Crop Max X, Y] Use these to crop, or choose a portion of the texture.
+\end{description}
+
+\section{Object Mapping Coordinates}
+
+Coordinates supported:
+\begin{description}
+\item[Global] the texture uses the scene's Global 3D coordinates for mapping.
+\item[Object] Uses a child Object's texture space as source of coordinates. The Object name must be specified in the text button on the right. Often used with Empty objects.
+\item[UV] UV coordinates are used for texturing.
+\item[Generated] the texture uses the object's local space.
+\item[Win] the texture uses the screen coordinates.
+\end{description}
+
+Projection modes:
+
+\begin{description}
+\item[Flat, Cube, Tube, Sphere] use them depending on the overall shape of the object. Use Flat for UV mapping.
+\end{description}
+
+Other settings:
+
+\begin{description}
+\item[Offset X, Y, Z] moves the texture.
+\item[Size X, Y, Z] scales the texture.
+\item[X, Y, Z axis] Re-orders the X, Y and Z coordinates.
+\end{description}
+
+\missingfigure{The image above is an example of Generated coordinates mapping and object projection. Notice how the texture adapts to the objects position and size. Besides, each object is using a suitable projection mode, so each surface is perpendicularly mapped.}
+
+\section{YafaRay Influence (Map To)}
+
+\begin{description}
+\item[Modulation modes (Diffuse color, Mirror amount, Mirror color, etc.)] the texture modulates the material property selected. Modes supported depend on the YafaRay material used (see it in the materials modulation section). Negative mode is supported. More than one modulation mode can be selected; in this case different material properties will be modulated with the same texture channel. Displacement mapping is only supported through a mesh modifier (more info here).
+\item[Blending modes] How this channel interacts with other channels above it. Supported modes are mix, add, multiply, substract, screen, difference, darken, lighten. More info here.
+\item[Stencil] the texture is used as a mask for all following textures. More info here.
+\item[Negative] produces a negative of the texture.
+\item[No RBG] Converts a texture into a gradient, the two extremes of the gradient scale being Material main color and color set in Color Swatch.
+\item[Color Swatch] A sort of a secondary color, to be mixed with Material diffuse color in procedural textures and in the No RBG feature.
+\item[Dvar] default value for scalar type textures (Mirror Amount, Transparency, etc..)
+\end{description}
+
+\subsection{Stencil}
+
+Stencil is a texturing feature that allows for mixing two texture channels in a controlled way, by using an intermediate mask texture. This feature can be used as well to set invisible parts of a texture, by using a stencil channel below. White value in the mask texture renders the above texture channel invisible.
+
+The images above show an example of a stencil setup. On the left there are the textures used and on the right the texture channels arrangement.
+
+The image above shows the `Map to' panel of the stencil texture channel. Notice that the Diffuse Color, Stencil and No RGB buttons are enabled.
+
+\missingfigure{The final result.}
+Related articles: Material Modulation.
+
+\subsection{Blending modes}
+
+Blending modes are used to determine how two texture channels are blended into each other. The default blend mode is Mix, which is used to hide the upper channel with whatever is present in the lower channel (remember that in Blender, textures have a higher visibility priority the lower they are in the channels stack). However, as each pixel in a texture has a numerical representation, a large number of mathematical ways to blend two channels is possible.
+
+This feature can be used to add complexity and richness to your texturing works. Supported modes are mix, add, multiply, substract, screen, difference, divide, darken and lighten.
+
+
+We are going to blend two textures: on the left is the base texture, on the right the blend texture. Please look at them carefully.
+
+
+\missingfigure{Base texture}   \missingfigure{Blend texture.}
+
+Add
+
+A very basic blending mode. It simply adds pixel values of one channel with the other (a+b). In case of values above 1, white is displayed. This mode is commutative (base and blend channels can be swapped)
+
+Notice how the black values in the blend texture don't affect the base texture, since a+0=a
+
+Subtract
+
+This blend mode simply subtracts pixel values of the base channel with the blend channel (a-b). In case of negative values, black is displayed.
+
+Notice how black values in the blend texture don't affect the base texture since a-0=a, while white values produce a black result.
+
+Multiply
+
+Multiply is a basic blending mode for darkening areas of a texture.
+
+Pixels from both channels are simply multiplied by each other. This returns a darker result than both input parameters, except if one of them equals to 1 (white). Completely white values do not change the base texture at all (and vice versa) - completely black values give a black result.
+
+This mode is commutative (base and blend channels can be swapped)
+
+Screen
+
+Screen is a basic blend mode for lightening areas of a texture.
+
+It is the opposite of 'multiply' mode. It returns a brighter result than both input parameters in most cases, except if one of them equals 0 (black). Completely black values in the blend channel do not change the base at all (and vice versa) - completely white gives a white result.
+
+This mode is commutative, channels can be swapped.
+
+Difference
+
+Subtracts either the blend texture from the base texture or the base texture from the blend texture, depending on which is brighter, to get always a positive result. Blending with black produces no change as a-0=a. Blending with white inverts the picture (1-a).
+
+This kind of blending produces a lot of variation. This mode is commutative as well.
+
+Divide
+
+This mode simply divides pixel values of the base texture with the blend texture (a/b). The darker the blend texture is, the lighter the result. However, remember that it is not a linear function, so the result easily reaches the upper limit with regular factors, since $\tfrac{a}{0}=\inf$.
+
+Darken
+
+Pixels from both channels are compared to each other, the darkest one is taken.
+
+Lighten
+
+Pixels from both channels are compared to each other, the lightest one is taken.
