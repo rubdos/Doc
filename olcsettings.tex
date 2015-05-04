@@ -1,4 +1,4 @@
-\chapter{Objects, Lights and Camera settings}
+\chapter{Objects, Lights and Camera settings}\label{chapter:olc}
 In general, settings under these three section of the YafaRay UI are used to give specific YafaRay properties to meshes, light sources and cameras in the Blender 3D scene. The general workflow is:
 \begin{enumerate}
 \item Create or select an existing object (mesh, light or camera) in the 3D scene.
@@ -21,7 +21,7 @@ First of all, you must select the mesh you want it to act as a light source. The
 
 \todo{Related articles, see yafaray documentation}
 
-\section{Lights}
+\section{Lights} \label{sec:lights}
 
 Lights settings are now fully controlled by the YafaRay UI. The general workflow is creating or selecting a light in the 3D viewport and then editing its properties using the Lamp data section. Users can edit lamp type, color, power, shadows sampling, geometry, etc. It is worth rememberting that lighting power is in fact a product of a couple of settings, Color and Power, available for every light type.
 
@@ -112,7 +112,7 @@ Spot is a common omnilight within a directional light beam. It has got a feature
 
 In the bottom section of the spot light panel YafaRay developers have included Blender Internal spotlight geometry settings (Distance, Clip Start, Clip End, Show Cone) for more cues in beam directional control.
 
-\section{Camera settings}
+\section{Camera settings}\label{sec:camerasettings}
 
 The general workflow is creating or selecting an existing camera in the 3D viewport and then editing its properties using the Camera data section. There are four camera types in YafaRay: Architect, Angular, Orthogonal and Perspective.
 

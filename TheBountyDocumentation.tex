@@ -7,18 +7,21 @@
 \usepackage{textcomp}
 \usepackage{amsmath}
 \usepackage{tcolorbox}
+\usepackage{wrapfig}
 
 \title{TheBounty Renderer: Official documentation}
 \author{TheBounty Renderer Team \and YafaRay Team}
 
 \newcommand{\note}[1]{\begin{tcolorbox}[title=Note] #1\end{tcolorbox}}
+\newcommand{\tbrref}[1]{Section~\ref{#1} on page~\pageref{#1}}
+\newcommand{\tbrchapref}[1]{Chapter~\ref{#1} on page~\pageref{#1}}
 
 \begin{document}
 \begin{titlepage}
     \centering
     \vfill
     {
-        \includegraphics[width=.9\textwidth]{logo.png} % also works with logo.pdf
+        \includegraphics[width=.9\textwidth]{images/logo.png} % also works with logo.pdf
         {\Huge Official documentation}\\
         \Large
         \vskip2cm
@@ -39,4 +42,8 @@
 \input{renderoutput}
 \input{olcsettings}
 \input{textureinput}
+\input{materials}
+
+\input{backgroundsettings}
+\input{volumetrics}
 \end{document}

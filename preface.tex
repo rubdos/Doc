@@ -1,7 +1,14 @@
 \chapter*{Introduction}
  \addcontentsline{toc}{chapter}{Introduction}
-
+{
 TheBounty Renderer\footnote{https://www.thebountyrenderer.org} is a free and open source\footnote{TheBounty Renderer is available under the LGPLv2.1 license.} montecarlo raytracer.
+
+\textbf{TheBounty Renderer} is a fork of the popular \textit{YafaRay}\footnote{http://www.yafaray.org} raytracer, which itself is a continuation of the \textit{Yafray} (short for ``yet another free raytracer'') raytracer.
+
+\begin{wrapfigure}{O}{0pt}
+    \includegraphics[width=.28\textwidth]{images/generalscreen.png}
+    \caption{View of the TheBounty render settings window in Blender, May 2015.}
+\end{wrapfigure}
 
 \bigskip
 
@@ -10,28 +17,19 @@ Ray tracing is a rendering technique for generating an image by tracing the path
 TheBounty usually works as add-on or plugin to a 3D software to provide raytracing capabilities on demand, although it can work as a stand-alone program as well. Blender 3D is the main host application of TheBounty at the moment but there are always on-going projects to add TheBounty support on other 3D packages and modellers.
 
 TheBounty integration in Blender is fairly complete and stable but it should be always considered as a work in progress as Blender and TheBounty keep on evolving. 
-
-\textbf{TheBounty Renderer} is a fork of the popular \textit{YafaRay}\footnote{http://www.yafaray.org} raytracer, which itself is a continuation of the \textit{Yafray} (short for ``yet another free raytracer'') raytracer.
-
+}
 
 \section*{TheBounty Renderer features overview}
  \addcontentsline{toc}{section}{TheBounty Renderer features overview}
 
-TheBounty main features are:
+\paragraph{Lights}
+TheBounty supports several types of light sources, i.e. \textit{point}, \textit{spot}, \textit{area} (a rectangular or parallelogram), \textit{mesh} light (which uses a triangle mesh), \textit{sphere} light, \textit{directional} light, \textit{sun} light and \textit{environment}/background light (with importance sampling for efficient image-based lighting, even without global illumination). For more information about the light types, please refer to \tbrref{sec:lights}.
 
-\begin{itemize}
-\item Lights
-\begin{itemize}
-\item point
-\item spot light
-\item area light (rectangular, or parallelogram actually)
-\item mesh light (uses a triangle mesh as light source)
-\item sphere light
-\item directional (with optional radius)
-\item sunlight (basically a directional with incoming direction sampled from a cone)
-\item environment light (background), with importance sampling for efficient image-based lighting (even without GI)
-\end{itemize}
-\item Materials:
+\paragraph{Materials} TheBounty supports \textit{multiple materials} for a single mesh. Materials can consist of different types of materials (diffuse with specular reflection, transparency and translucency)
+
+\todo{Rework this paragraph. This list is really aweful}
+
+
 \begin{itemize}
 \item Multiple materials for a mesh.
 \item basic diffuse w. specular reflection, transparency and translucency, support for shader nodes on various properties
@@ -44,53 +42,26 @@ TheBounty main features are:
 \item blend material, using a blend value or a texture map.
 \item subsurface scattering
 \end{itemize}
-\item Mapping:
-\begin{itemize} 
-\item Multiple textures for a shader.
-\item UV coordinates.
-\item Flat, cube, tube, sphere in global and relative coordinates.
-\item Blending modes.
-\item Stencil.
-\end{itemize} 
-\item Textures:
-\begin{itemize} 
-\item Basic image textures (tga, jpeg, png, exr, hdr),
-\item Procedural textures: cloud, marble, wood, voronoi, musgrave, distorted noise and "RGB-cube".
-\end{itemize} 
-\item Backgrounds:
-\begin{itemize}
-\item Constant.
-\item Sunsky generator with sun light and sky light.
-\item Texture, Image-based Lighting.
-\item Simple gradient.
-\end{itemize} 
-\item Cameras:
-\begin{itemize} 
-\item Perspective camera with raytraced DoF.
-\item Architect with raytraced DOF.
-\item Orthographic camera.
-\item Angular camera.
-\end{itemize} 
-\item Surface integrators:
-\begin{itemize} 
-\item direct lighting with support for ambient occlusion and caustic photon maps
-\item path tracing
-\item photon mapping with final gather
-\item bi-directional path tracing
-\item stochastic progressive photon mapping
-\item Volume integrator
-\end{itemize} 
-\item Volume rendering.
-\item Antialiasing:
-\begin{itemize}
-\item adaptive (simple color threshold based)
-\item variable size reconstruction filters (box, gauss and mitchell-netravali currently)
-\end{itemize} 
-\item Transparent shadows.
-\item Multithreaded rendering passes and radiance map creation.
-\item Basic XML writing and reading (using libXML) for scenes (see YafaRayXML for specifications).
-\item Plugin based.
-\end{itemize}
+
+For more information about the different Material options, please refer to \tbrchapref{chapter:materials}.
+
+\paragraph{Textures} Several basic image textures can be used (supported formats are tga, jpeg, png, and even exr and hdr). Also some procedural textures are supported (cloud, marble, wood, voronoi, musgrave, distorted     noise and ``RGB-cube").
+
+For mapping textures to meshes, TheBounty supports multiple textures for a shader, UV coordinates, flat, cube, tube, sphere in global and relative coordinates, blending modes and stencil.  
+
+For more information on this topic, please refer to \tbrchapref{chapter:textureinput}
+
+\paragraph{Backgrounds} TheBounty supports multiple types of backgrounds: single color, two versions of a sunsky (from which the second version has a Night mode), texture and image based lighting and a simple gradient. For more information on this topic, please refer to \tbrref{chapter:backgroundsettings}
+
+\paragraph{Cameras} Different types and settings for camera's can be chosen; a \textit{perspective} camera with raytraced DOF, an \textit{architect} camera with raytraced DOF, an \textit{orthographic} camera and an \textit{angular} camera. For a description and usage of the different camera types, cfr. \tbrref{sec:camerasettings}
+
+\paragraph{Lighting methods} TheBounty gives access to different raytracing lighting methods; direct lighting with support for ambient occlusion and caustic photon maps, path tracing, photon mapping with final gather, bi-directional path tracing and stochastic progressive photon mapping (SPPM).
+
+\paragraph{Volumetrics} TheBounty is able to raytrace volumes, like smoke or clouds. For more information refer to \tbrchapref{chapter:volumetrics}
+
+\paragraph{Adaptive antialiasing} TheBounty supports adaptive (simple color threshold based) antialiasing using variable size reconstruction filters (box, gauss and mitchell-netravali).
+
+\paragraph{Other features} TheBounty also has support for Transparent shadows, multithreaded rendering passes, multipass rendering, radiance map creation. It also has an exporter for XML files (using libXML) for scenes (see YafaRayXML for specifications) and TheBounty is completely plugin based.
 
 \section*{Project History}
  \addcontentsline{toc}{section}{Project History}
@@ -127,9 +98,17 @@ by \textit{Alejandro Conty Estevez, Chris Williamson, Johnny Matthews}
 
 By request from the Blender Community, YafRay was added as a Blender plugin from the 2.34 release on, in August 2004. Alejandro de Greef (eeshlo) coded most of the features in the late YafRay releases. At that time it was already evident that a code refactor was necessary in order to add new advanced features to YafRay. The last YafRay release was the 0.0.9 version in Summer 2006.
 
-\bigskip
+\begin{wrapfigure}{l}{0pt}
+    \includegraphics[width=.5\textwidth]{images/caurad_test.jpg}
+    \caption{One of the first YafRay renders by \textbf{Jandro}, circa 2001}
+\end{wrapfigure}
 
 \textit{YafaRay} is the result of rewriting the YafRay source code from scratch. Mathias Wein (Lynx) started to work on the new engine in December 2005. As a result of the rewriting and to make people aware that it was actually a completely new engine, the YafRay name was changed into YafaRay. Nobody knows for sure what the added 'a' stands for.
+
+\begin{wrapfigure}{r}{0pt}
+    \includegraphics[width=.5\textwidth]{images/bunny_ibl.jpg}
+    \caption{One of the first YafaRay renders by \textbf{Lyxn3D}, circa 2005}
+\end{wrapfigure}
 
 \bigskip
 
