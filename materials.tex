@@ -1,1 +1,312 @@
 \chapter{Materials} \label{chapter:materials}
+In order to understand Yafaray materials it is always better to think of it as a sum of components rather that a global calculation. Once the eye rays are shot, a render engine is always tracing different kind of rays according to surface properties defined in the materials section. These rays fall into 5 main categories: diffuse, mirror specular, glossy specular, mirror refraction and glossy refraction. A YafaRay material is usually a combination of several of these basic components.
+
+\section{Multimaterial}
+
+YafaRay supports Blender Multimaterial feature, which means that you can assign different materials to different parts of a mesh, using sets of polygons. You can find more information about multimaterials here on \url{http://wiki.blender.org/index.php/Doc:2.6/Manual/Materials/Multiple\_Materials}.
+
+Alternatively you can use the Blend material to mix two materials in a mesh. In YafaRay, there are three ways to mix material properties in an object, which are:
+
+\begin{description}
+\item[Stencil] to mix two texture channels in a material, using a texture as a blending pattern. (for more information, refer to \tbrref{sec:stencil})
+\item[Blend material] to mix two materials in a mesh, using either a blend factor or a texture.
+\item[Multimaterial] to assing different materials to a mesh, using sets of polygons.
+\end{description}
+
+\section{Material settings}
+
+There are five generic material types in YafaRay, with many possibilities for each of them to achieve advanced effects. They are glass, rough glass, coated glossy, glossy and shinydiffusemat. Also, there is a Blend type to mix two of them in a controlled way. This is a brief list of what YafaRay materials can be useful for:
+
+\begin{description}
+\item[Blend] blend two materials, using a blend factor or a texture map.
+\item[Glass] glass, water, fake glass.
+\item[Rough Glass] rough transparent materials.
+\item[Glossy] all kind of plastics, clean and polished metal, clean rough metal, car paint, finished wood, lacquered surfaces, painted surfaces, varnished wood, glaze and organic surfaces, materials with anisotropic reflections.
+\item[Coated glossy] car paint, lacquered surfaces.
+\item[Shinydiffusemat] stone, rusted metal, concrete, fabric, paper, rough wood, curtains, emit surfaces, perfect mirror, materials with a basic transparency and alpha mapping with color-filtered shadows, translucent materials with color-filtered shadows, etc.
+\end{description}
+
+To aquire some background knowledge about the topics explained in the following sections, take a look at Neil Blevins's webpage \footnote{\url{http://www.neilblevins.com/cg_education/cg_education.htm}}.
+
+\section{Material Preview}
+
+With this feature you can render a little preview of the material selected. The material preview will be rendered with the YafaRay engine and according with the material parameters choosen, and will take into account material mapped textures.
+
+\section{Glass}
+
+To render correct glass, it is important that glass objects follow realistic techniques for modelling, such as closed meshes with real thickness.
+
+It is also important that your mesh normals point in the correct direction. Use the normal tools in Blender to control normal direction.
+
+In real life, light refracts one time when passing from one medium to another, for instance from solid (glass) to liquid. In your 3D scene, use one mesh for each refractive event. That means: water meeting glass must be exactly one surface, and the relative refration index of the "water meets glass" surface must be $\frac{\text{IOR}_{glass}}{\text{IOR}_{water}}$ (when normals are pointing into the water). Taking into account that glass IOR is 1.55 and water IOR is 1.33, a cross section of a glass of water should look like the glass cross section on the left (normals in red).
+
+Rendering a a number of consecutive transparent surfaces depends on recursive raydepth (General settings, Render main section). If a transparent surface is rendered black, try increasing Raydepth.
+
+Glass is basically refraction, reflection and absorption of incoming light. It means that the scene sorrounding the glass has got an impact on the glass appearance, as well as the lighting setup. It means that glass will produce caustics if certain conditions are met, which are:
+
+\begin{itemize}
+\item There exist a light source and/or a background (IBL, Sunsky) which is shooting caustic rays.
+\item The glass material has got IOR>1.
+\item A global illumination method is used (pathtracing with caustic paths, photonmapping, bidirectional) or Use caustics is enabled in the Direct Lighting method.
+\item The caustic rays have enough depth to pass through all the transparent surfaces (Caustics depth).
+\end{itemize}
+
+Glass material mixes several independent concepts that can be used alone or combined with the other parameters to get diferent kinds of results. These concepts are:
+
+\paragraph{Absorption}
+
+Some of the incident light is absorbed by a transparent medium. The more distance light has to get through a medium, the more it gets absorbed. In a glass with different sections, the glass will get darker if the section is bigger.
+
+Absorption also defines the color of the glass and the strength of the caustic effect. The more light is absorbed, the less light is transmitted. By using an absorption color, we also define the color of caustics. White disables absorption.
+
+\paragraph{Filtering}
+
+Color is uniform regardless of glass section. The amount of transmitted light is also constant. You can use this setting instead of absorption if the glass section is uniform, for instance.
+
+You need to use this setting to tint transparent shadows when Fake Shadows and Transparent Shadows are enabled.
+
+Transmit Filter is a related setting which blends Absorption and Filtering. When Transmit Filter equals 1, Filtering is shown. When Transmit Filter equals 0, Absorption is shown (if enabled).
+
+\paragraph{Reflection (Mirror)}
+
+Some of the light is reflected. Amount of reflection depends on the index of refraction (IOR). The higher the index, the more reflective the glass is. It produces reflective caustics.
+
+\paragraph{Refraction (IOR)}
+
+Refraction is the change in direction when light waves travel from a medium with a given refractive index to a medium with another. Refraction produces caustics. Some materials index are:
+
+Ice: 1.31
+Water: 1.33
+Clear plastic: 1.40
+Standard glass: 1.52
+Amber: 1.55
+Diamond: 2.42
+
+
+\paragraph{Dispersion}
+
+Dispersion causes the spatial separation of a white light into components of different wavelengths (different colors).
+
+When Path tracing is used, dispersion noise depends on path tracing samples, the more the samples the lesser the noise.
+
+
+\paragraph{Fake Shadows}
+
+Not all light tracing methods are optimised to render caustics. This is the case of Direct lighting or Path tracing for instance. When fake glass is enabled, raytracing shadows rays get through this object when looking for light sources to sample, and colored transparent shadows are calculated based on Filtering values. Notice the glass shadow, compared with the examples above.
+
+The Transparent Shadows button in the Render section must be enabled too for this feature to work. Filter color controls color of the transparent shadows.
+
+Related articles:
+
+Ray Depth.
+Shadow Depth and Transparent shadows.
+Caustic Photon Map.
+Rendering Pathtracing caustic component.
+Photon Mapping.
+
+\section{Rough Glass}
+
+This is basically a glass material (see section above) but using a glossy model for the refractive component. As with the glossy material, tiny random bumps on the surface of the material cause both the reflective and the refractive components to be blurry. Exponent controls blur of the glossy refraction; the higher the exponent, the rougher the surface is. The glossy effect can be reinforced by using a fine relief map. Sampling of the glossy effect depends on antialiasing settings and it works well with adaptative sampling strategies.
+
+
+Difference Between Exponent=0.20 (left) and Exponent=0.90 (right). Caustics produced by SPPM.
+
+\section{Glossy}
+
+A glossy reflection means that tiny random bumps on the surface of the material cause the reflection to be blurry. In fact there is a wide range of materials with such a reflection. YafaRay glossy material can be useful for all kinds of finished surfaces such as plastics, polished metal, car paint, finished wood, lacquered surfaces, painted surfaces, varnished wood, glaze, organic materials, etc. The glossy effect can be reinforced by using a fine bump map, or by mapping glossy reflection with a fine texture.
+
+The main concepts of the glossy shader are:
+
+\paragraph{Diffuse and Glossy colors}
+
+A Glossy material has got two colors, diffuse and glossy. Glossy reflection parameter, apart from controlling the reflection strength, should be understood as a blend factor between the diffuse and the glossy color. The more reflective, the less diffuse.
+
+\begin{quote}
+"When light hits an object, the energy is reflected as one of two components; the specular component (the shiny highlight) and the diffuse (the color of the object). The relationship of these two components is what defines what kind of material the object is. These two kinds of energy make up the 100\% of light reflected off an object. If 95\% of it is diffuse energy, then the remaining 5\% is specular energy. When the specularity increases, the diffuse component drops, and vice versa. A ping pong ball is considered to be a very diffuse object, with very little specularity and lots of diffuse, and a mirror is thought of as having a very high specularity, and almost no diffuse."
+\begin{flushright}
+as stated in \textit{Siggraph 96 course notes book \#30 Pixel Cinematography: A lighting approach for Computer Graphics}
+\end{flushright}
+\end{quote}
+
+When Glossy reflection is zero, you will see mostly the diffuse color with a bit of rim glossy color (image on the left). When Glossy reflection value is 1, you will see only the glossy color (image on the right). Notice Glossy reflection slider in both images:
+
+Remember that coloured reflections is a particular feature of conductive materials (gold, copper), while non-conductive have got white colored reflections. So Glossy color of non-conductive materials like plastic should be white. Diffuse Reflection value is just a diffuse color multiplying factor.
+
+Related articles:
+
+Diffuse color mapping.
+Specular color mapping.
+
+\paragraph{Glossy reflection and Exponent}
+
+Glossy reflection controls the strength of the reflection. The more reflective, the less diffuse.
+
+Exponent controls blur of the glossy reflection; the higher the exponent, the sharper the reflection. Use values between 1 and 200 for plastics and higher values for metallic surfaces. Glossy reflection produces caustics.
+
+Below there is an example of a material with different glossy reflection (GR) and exponent settings (EXP). Diffuse color is dark grey and glossy color is white:
+
+Related article: Specular intensity mapping.
+\paragraph{Glossy reflection sampling}
+
+When these light sources are used in the scene, noise in the glossy reflection depends on:
+
+Area light (area light, sphere light, mesh light) samples.
+Sun light samples.
+HDR backgrounds (IBL, Darktide Sunsky, Sunsky) samples.
+AA samples, the higher the less noisy.
+
+Below on the right, area lights are using 2 samples while on the left they are using 64 samples.
+
+Related articles:
+
+Arealight
+Sun light.
+First anti-aliasing pass.
+Background Settings.
+
+\paragraph{As Diffuse}
+
+When As diffuse is enabled in Photon mapping, it means that the photon map will be used to calculate the glossy reflection, instead of raytracing it, which results in faster render times. In practice, this method is recommended only for glossy surfaces with a low Exponent, since the precision of glossy reflections calculated with photon mapping is always lower. Besides, As diffuse option enabled will be likely to produce flickering of the glossy reflection in animations.
+
+Both spheres in the left render have got As diffuse enabled and the render time is 166 seconds. Both spheres in the right render have got As diffuse disabled and the render time is 186 seconds. Notice the reflections!
+
+Related articles:
+
+Exponent.
+Photon Mapping.
+
+\paragraph{Anisotropic reflections}
+
+This material is useful to get anisotropic reflections, which means that reflection is not equal in all directions. This kind of reflection happens when a defect in a reflective surface repeats with some regularity. When Anisotropic is enabled, the exponent value is divided into vertical and horizontal components. By using a different value for each component., the reflection will take an anisotropic oval shape. This effect can be reinforced by using a suitable bump map. When Anisotropic is enabled, the Exponent button is disabled. Horizontal and vertical direction of the anisotropic exponent depend on UV mapping coordinates. Below you have a comparison between anisotropic reflections (left) and default isotropic reflections (right).
+
+\section{Coated Glossy}
+
+Coated Glossy is basically a glossy material (see the previous section) with some kind of reflective coating layer on top. IOR is the setting that controls reflectivity of the coating top layer. This reflective layer can produce caustics. It is a good material for car paint. Below an example of different IOR values:
+
+Related article: Glossy material.
+
+\section{ShinyDiffuse}
+
+Shinydiffuse is a shader with many applications. It can be useful to get:
+
+Diffuse materials without any specular component.
+Perfect mirror reflection with or without Fresnel effect.
+Alpha mapping with shadows calculation derived from the map.
+Translucency with color filtering.
+Transparency with color filtering.
+Emit surfaces.
+
+For instance, this material can be used for rough stone, rusted metal, concrete, fabric, clay, asphalt, paper, rough wood, chrome balls, shiny plastics, basic car paint, curtains, leaves, billboards, etc.
+
+The main concepts of the ShinyDiffuse shader are:
+
+
+
+\paragraph{Diffuse reflection}
+
+Diffuse reflection is the reflection of light from an uneven or granular surface such that the incident rays are randomly reflected and scattered in all directions. The amount of diffuse reflection is mainly controlled by the surface Color and Reflection Strength. YafaRay uses two models to render the diffuse component, which are Lambertian and Oren-Nayar.
+Lambertian is a basic diffuse model with no view dependence. Brightness is constant from all viewing directions; only interaction between surface and light sources is modelled. It is a method valid only for very smooth matte surfaces, like paper, smooth plastic or polished wood.
+
+Oren-Nayar is a view dependent, physically-based microfacet model for diffuse reflections, which takes into account geometric optics and interaction at microfacet level produced by light sources. Oren-Nayar models the diffuse reflectance for rough surfaces more accurately than the Lambertian model. Sigma controls the roughness of the surface.
+
+Diffuse Reflection value is a diffuse color global multiplying factor.
+
+
+GPL Photograph of a comparison between a matte clay vase and its renderings with the Lambertian model and the Oren-Nayar model (Source). Some Sigma values, as per the official project page for the Oren-Nayar model, are:
+
+\begin{multicols}{2}
+\begin{tabular}{l l}
+Felt& 0.414686\\
+Rough plastic& 0.278057\\
+Leather& 0.179776\\
+Velvet& 0.751002\\
+Pebbles& 0.443289\\
+Plaster\_b& 0.543788\\
+Rough paper& 0.311376\\
+Roof shingle& 0.819147\\
+Rug\_b& 0.613889\\
+Sponge& 0.872413\\
+Wool& 0.978133\\
+\end{tabular}
+\begin{tabular}{l l}
+Quarry tile& 0.360574\\
+Slate\_b& 0.309590\\
+Human skin& 0.579386\\
+Brick\_b& 0.275990\\
+Linen& 0.514593\\
+Cotton& 0.482679\\
+Stones& 1.107168\\
+Concrete\_b& 0.308956\\
+Concrete\_c& 0.461930\\
+Wood\_b& 0.351271\\
+Tree bark& 0.293226\\
+\end{tabular}
+\end{multicols}
+
+Related article: Diffuse color mapping
+\paragraph{Mirror and Fresnel}
+
+Mirror produces pure specular reflection. Mirror strength is a blend factor between the specular and diffuse components, with their respective colors. The more specular, the less diffuse component will be shown. When Fresnel is enabled, the amount of specular reflection depends on how the viewer is oriented relative to the surface. Fresnel means that a surface is more reflective at grazing angles than at perpendicular ones. IOR controls the Fresnel reflection strength, the higher the more reflective at every angle. Mirror and Fresnel reflections can produce caustics. Below are several examples of Mirror and Fresnel, MS stands for Mirror Strength. White is being used for both diffuse and mirror color:
+
+Related articles:
+
+Specular color mapping.
+Specular intensity mapping.
+Ray Depth.
+
+\paragraph{Transparency}
+
+With this setting you can achieve a basic transparency effect, without refraction but with transparent shadows and color filtering.
+
+Transparent shadows and color filtering means that light is filtered by the transparent surface, and gets coloured and diminished according to the surface properties. Transparency is basically a 'fake' feature intended for basic transparency and alpha mapping purposes, since it is a mappable feature. To get tranparent shadows and color filtering, Transparent Shadows button must be enabled in the Settings main section.
+
+Settings that affect this feature are:
+
+Diffuse color Picker: control diffuse color of the object, which results in color filtering.
+Transparency: Amount of transparency.
+Transmit Filter: color filtering strength. When it equals 0 there is no color filtering, therefore shadows are not tinted by the tranparent surface.
+
+In Settings main section:
+
+Raydepth: for camera rays, to get through successive transparent events.
+Transparent Shadows: this option must be enabled to produce transparent shadows and color filtering. Technically speaking, it allows raytracing shadows rays to get through this mesh when looking for light sources.
+Shadows Depth: for raytracing shadow rays, to get through successive transparent surfaces.
+
+With this feature you can emulate the Blender OnlyCast feature, which makes objects not to be rendered but to cast shadows only. Set the object transparency=1 while keeping Transparent Shadows button disabled.
+
+Related articles:
+
+Alpha intensity mapping.
+Ray Depth.
+Shadow Depth and Transparent shadows.
+Glass material.
+
+
+\paragraph{Translucency}
+
+With this setting you can achieve a basic 2D translucency effect with transparent shadows and color filtering. Translucent materials allow light to pass through them but only diffusely; you can not see through. Light is scattered after passing through the transparent surface.
+
+Transparent shadows and color filtering means that light is filtered by the translucent surface, and it is coloured and diminished according to the surface properties. Translucency slider controls amount of translucency.
+
+
+Scattered light with transparent shadows and color fitering only works with Global Illumination methods, which are Pathtracing, Bidirectional Pathtracing and Photon mapping.
+Example of translucency, notice the curtains. `My Room' by ChojinDSL.
+Related article: Alpha intensity mapping.
+
+\paragraph{Emit}
+
+Amount of light a material emits, similar to the mesh light concept. Color of the emitted light is controlled by the Diffuse color. Emit slider controls strength of the emitted light.
+
+Emit objects can be used as diffuse light sources, but you will have to use it with path tracing or bidirectional path tracing lighting methods.
+Related article: Diffuse color mapping with emit value
+
+
+\section{Blend Material}
+
+This feature takes two defined materials and mixes them into a third one. You need to define three materials then, two ones to mix and a third Blend material which is applied to the object to render. This feature can be useful to mix properties from two different materials, for instance glossy reflection blended with transparency. It can be useful as well to map two different parts of a mesh with different materials using a texture as a pattern, without resorting to multimaterial which depends on mesh polygons.
+
+Blend value controls the percentage of each material in the final mix. A value of 0.50 means that each material contributes the same to the final look. These are examples of different blend materials; the sphere on the left has got the Blend material:
+0.5 blend between a glossy material and a shinydiffuse with transparency=0.85.
+0.50 blend between a glossy material and a shinydiffuse with mirror=0.80.
+0.25 blend between two glossy materials. One material uses exponent=15, the other uses exponent = 1500.
+0.25 blend between two shinydiffuse materials. One uses mirror=0.20 and transparency=0.85. The other is a completely diffuse material.

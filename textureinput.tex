@@ -177,14 +177,15 @@ Other settings:
 \begin{description}
 \item[Modulation modes (Diffuse color, Mirror amount, Mirror color, etc.)] the texture modulates the material property selected. Modes supported depend on the YafaRay material used (see it in the materials modulation section). Negative mode is supported. More than one modulation mode can be selected; in this case different material properties will be modulated with the same texture channel. Displacement mapping is only supported through a mesh modifier (more info here).
 \item[Blending modes] How this channel interacts with other channels above it. Supported modes are mix, add, multiply, substract, screen, difference, darken, lighten. More info here.
-\item[Stencil] the texture is used as a mask for all following textures. More info here.
+\item[Stencil] the texture is used as a mask for all following textures. More info in \tbrref{sec:stencil}
 \item[Negative] produces a negative of the texture.
 \item[No RBG] Converts a texture into a gradient, the two extremes of the gradient scale being Material main color and color set in Color Swatch.
 \item[Color Swatch] A sort of a secondary color, to be mixed with Material diffuse color in procedural textures and in the No RBG feature.
 \item[Dvar] default value for scalar type textures (Mirror Amount, Transparency, etc..)
 \end{description}
+\todo{All the ``more info here'' should get a \textbackslash{}tbrref}
 
-\subsection{Stencil}
+\subsection{Stencil} \label{sec:stencil}
 
 Stencil is a texturing feature that allows for mixing two texture channels in a controlled way, by using an intermediate mask texture. This feature can be used as well to set invisible parts of a texture, by using a stencil channel below. White value in the mask texture renders the above texture channel invisible.
 
